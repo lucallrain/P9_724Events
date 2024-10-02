@@ -65,9 +65,10 @@ describe("When Events is created", () => {
       // Ouvrir la liste déroulante des catégories
       fireEvent.click(await screen.findByTestId("collapse-button-testid"));
 
-      // Sélectionner la catégorie "soirée entreprise" avec findByText
-      const categoryElement = await screen.findByText("soirée entreprise");
+      const categoryElements = await screen.findAllByText("soirée entreprise");
+      const categoryElement = categoryElements.find(el => el.tagName === "LI"); // Sélectionner celui qui correspond à la catégorie
       fireEvent.click(categoryElement);
+
 
       // Vérifiez que "Conférence #productCON" est affiché
       await screen.findByText("Conférence #productCON");

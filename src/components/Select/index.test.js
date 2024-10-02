@@ -1,87 +1,68 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import Select from "./index";
 
-describe("When a select is created", () => {
-  it("a list of choices is displayed", () => {
+describe("Select Component", () => {
+  
+  it("displays a list of choices with a default option 'Toutes'", () => {
     render(<Select selection={["value1", "value2"]} />);
+    
     const selectElement = screen.getByTestId("select-testid");
-    const selectDefault = screen.getByText("Toutes");
+    const defaultOption = screen.getByText("Toutes");
+    
     expect(selectElement).toBeInTheDocument();
-    expect(selectDefault).toBeInTheDocument();
+    expect(defaultOption).toBeInTheDocument();
   });
-  it("a collapse action button is displayed", () => {
+
+  it("displays a collapse action button", () => {
     render(<Select selection={["value1", "value2"]} />);
-    const collapseButtonElement = screen.getByTestId("collapse-button-testid");
-    expect(collapseButtonElement).toBeInTheDocument();
+    
+    const collapseButton = screen.getByTestId("collapse-button-testid");
+    
+    expect(collapseButton).toBeInTheDocument();
   });
 
   describe("with a label", () => {
-    it("a label is displayed", () => {
+    it("displays the label", () => {
       render(<Select label="label" selection={["value1", "value2"]} />);
-      const labelDefault = screen.getByText("label");
-      expect(labelDefault).toBeInTheDocument();
+      
+      const labelElement = screen.getByText("label");
+      
+      expect(labelElement).toBeInTheDocument();
     });
   });
 
-  describe("and a click is trigger on collapse button", () => {
-    it("a list of values is displayed", () => {
+  describe("when the collapse button is clicked", () => {
+    it("displays the list of values", () => {
       render(<Select selection={["value1", "value2"]} />);
-      const collapseButtonElement = screen.getByTestId(
-        "collapse-button-testid"
-      );
-      fireEvent(
-        collapseButtonElement,
-        new MouseEvent("click", {
-          bubbles: true,
-          cancelable: true,
-        })
-      );
-      const choice1 = screen.getByText("value1");
-      const choice2 = screen.getByText("value2");
-      expect(choice1).toBeInTheDocument();
-      expect(choice2).toBeInTheDocument();
+      
+      const collapseButton = screen.getByTestId("collapse-button-testid");
+      fireEvent.click(collapseButton);
+
+      const value1 = screen.getByText("value1");
+      const value2 = screen.getByText("value2");
+      
+      expect(value1).toBeInTheDocument();
+      expect(value2).toBeInTheDocument();
     });
-    describe("and a click is triggered on a choice item", () => {
-      it("a onChange callback is called", () => {
+
+    describe("when a value is selected", () => {
+      it("calls the onChange callback", () => {
         const onChange = jest.fn();
         render(<Select selection={["value1", "value2"]} onChange={onChange} />);
-        const collapseButtonElement = screen.getByTestId(
-          "collapse-button-testid"
-        );
-        fireEvent(
-          collapseButtonElement,
-          new MouseEvent("click", {
-            bubbles: true,
-            cancelable: true,
-          })
-        );
-        const choice1 = screen.getByText("value1");
-        fireEvent(
-          choice1,
-          new MouseEvent("click", {
-            bubbles: true,
-            cancelable: true,
-          })
-        );
-        expect(onChange.mock.calls.length).toBeGreaterThan(0);
+        
+        const collapseButton = screen.getByTestId("collapse-button-testid");
+        fireEvent.click(collapseButton);
 
-        fireEvent(
-          collapseButtonElement,
-          new MouseEvent("click", {
-            bubbles: true,
-            cancelable: true,
-          })
-        );
+        const value1 = screen.getByText("value1");
+        fireEvent.click(value1);
 
-        const choiceAll = screen.getByText("Toutes");
-        fireEvent(
-          choiceAll,
-          new MouseEvent("click", {
-            bubbles: true,
-            cancelable: true,
-          })
-        );
-        expect(onChange.mock.calls.length).toBeGreaterThan(1);
+        expect(onChange).toHaveBeenCalledTimes(1);
+
+        fireEvent.click(collapseButton);
+        const defaultOption = screen.getByText("Toutes");
+        fireEvent.click(defaultOption);
+
+        expect(onChange).toHaveBeenCalledTimes(2);
       });
     });
   });
