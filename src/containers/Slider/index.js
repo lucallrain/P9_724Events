@@ -1,38 +1,45 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useData } from "../../contexts/DataContext";
 import { getMonth } from "../../helpers/Date";
-
 import "./style.scss";
 
 const Slider = () => {
   const { data } = useData();
   const [index, setIndex] = useState(0);
+  const [isManual, setIsManual] = useState(false);
+  const intervalRef = useRef(null);
 
   // Trier les événements par date décroissante
-  const byDateDesc = data?.focus.sort((evtA, evtB) =>
+  const byDateDesc = data?.focus?.sort((evtA, evtB) =>
     new Date(evtA.date) < new Date(evtB.date) ? -1 : 1
-  );
+  ) || [];
 
   const nextCard = () => {
-    setTimeout(() => {
-      if (byDateDesc && byDateDesc.length > 0) {
-        setIndex(index < byDateDesc.length - 1 ? index + 1 : 0);
-      }
-    }, 5000);
+    setIndex((prevIndex) =>
+      prevIndex < byDateDesc.length - 1 ? prevIndex + 1 : 0
+    );
   };
 
+  // Vérifier que les données sont présentes avant de démarrer l'intervalle
   useEffect(() => {
-    nextCard();
-    // Cleanup pour éviter l'exécution multiple des timeouts
-    return () => clearTimeout(nextCard);
-  }, [index, byDateDesc]);
+    if (!isManual && byDateDesc.length > 0) {
+      intervalRef.current = setInterval(nextCard, 5000);
+    }
+    return () => clearInterval(intervalRef.current);
+  }, [isManual, index, byDateDesc.length]);
+
+  const handleRadioChange = (radioIdx) => {
+    clearInterval(intervalRef.current);
+    setIndex(radioIdx); // Mise à jour de l'index lors du changement manuel
+    setIsManual(true); // Désactiver l'auto-slide
+  };
 
   return (
     <div className="SlideCardList">
-      {byDateDesc?.map((event, idx) => (
+      {byDateDesc.map((event, eventIdx) => (
         <div
-          key={event.id || `event-${idx}`} // Utiliser un identifiant unique ou un fallback si event.id n'est pas défini
-          className={`SlideCard SlideCard--${index === idx ? "display" : "hide"}`}
+          key={event.id || eventIdx}
+          className={`SlideCard ${index === eventIdx ? "SlideCard--display" : "SlideCard--hide"}`}
         >
           <img src={event.cover} alt="forum" />
           <div className="SlideCard__descriptionContainer">
@@ -44,13 +51,13 @@ const Slider = () => {
           </div>
           <div className="SlideCard__paginationContainer">
             <div className="SlideCard__pagination">
-              {byDateDesc.map((radioEvent, radioIdx) => (
+              {byDateDesc.map((_, radioIdx) => (
                 <input
-                  key={`radio-${radioEvent.id || radioIdx}`} 
+                  key={`radio-${event.id || radioIdx}`}
                   type="radio"
                   name="radio-button"
-                  checked={idx === radioIdx}
-                  onChange={() => setIndex(radioIdx)}
+                  checked={index === radioIdx} // Gérer la sélection
+                  onChange={() => handleRadioChange(radioIdx)}
                 />
               ))}
             </div>
