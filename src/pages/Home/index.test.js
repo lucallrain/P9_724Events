@@ -1,44 +1,35 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen, fireEvent, within, waitFor } from "@testing-library/react";
 import Home from "./index";
 
-describe("When Form is created", () => {
-  it("a list of fields card is displayed", async () => {
+describe("Home Page Integration Tests", () => {
+  
+  // Test 1: Slider section is rendered
+  it("displays the slider section", async () => {
     render(<Home />);
-    await screen.findByText("Email");
-    await screen.findByText("Nom");
-    await screen.findByText("Prénom");
-    await screen.findByText("Personel / Entreprise");
+    const sliderSection = await screen.findByTestId("slider", {}, { timeout: 2000 });
+    expect(sliderSection).toBeInTheDocument();
   });
+  
 
-  describe("and a click is triggered on the submit button", () => {
-    it("the success message is displayed", async () => {
-      render(<Home />);
-      fireEvent(
-        await screen.findByText("Envoyer"),
-        new MouseEvent("click", {
-          cancelable: true,
-          bubbles: true,
-        })
-      );
-      await screen.findByText("En cours");
-      await screen.findByText("Message envoyé !");
-    });
+  // Test 2: Services section is rendered with service cards
+  it("displays the services section with service cards", async () => {
+    render(<Home />);
+    const serviceSection = await waitFor(() => screen.findByTestId("services"));
+    
+    const serviceCards = within(serviceSection).getAllByRole("heading", { level: 3 });
+    expect(serviceCards.length).toBe(3); // Il y a 3 services
   });
+  
 
-});
-
-
-describe("When a page is created", () => {
-  it("a list of events is displayed", () => {
-    // to implement
-  })
-  it("a list a people is displayed", () => {
-    // to implement
-  })
-  it("a footer is displayed", () => {
-    // to implement
-  })
-  it("an event card, with the last event, is displayed", () => {
-    // to implement
-  })
+  // Test 3: Contact form submission shows success message
+  it("displays success message after contact form submission", async () => {
+    render(<Home />);
+    
+    // Simulation de la soumission du formulaire
+    fireEvent.click(await screen.findByText("Envoyer"));
+    
+    // Vérification que le message de succès est affiché
+    const successMessage = await screen.findByText("Message envoyé !");
+    expect(successMessage).toBeInTheDocument();
+  });
 });

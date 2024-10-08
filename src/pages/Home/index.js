@@ -21,12 +21,12 @@ const Page = () => {
       </header>
       <main>
         {/* Slider Section */}
-        <section id="slider" className="SliderContainer">
+        <section id="slider" className="SliderContainer" data-testid="slider">
           <Slider />
         </section>
 
         {/* Services Section */}
-        <section id="services" className="ServicesContainer">
+        <section id="services" className="ServicesContainer" data-testid="services">
           <h2 className="Title">Nos services</h2>
           <p>Nous organisons des événements sur mesure partout dans le monde</p>
           <div className="ListContainer">
@@ -46,13 +46,13 @@ const Page = () => {
         </section>
 
         {/* Events Section */}
-        <section id="events" className="EventsContainer">
+        <section id="events" className="EventsContainer" data-testid="events">
           <h2 className="Title">Nos réalisations</h2>
           <EventList />
         </section>
 
         {/* Team Section */}
-        <section id="team" className="PeoplesContainer">
+        <section id="team" className="PeoplesContainer" data-testid="team">
           <h2 className="Title">Notre équipe</h2>
           <p>Une équipe d&apos;experts dédiée à l&apos;organisation de vos événements</p>
           <div className="ListContainer">
@@ -66,7 +66,7 @@ const Page = () => {
         </section>
 
         {/* Contact Form Section */}
-        <section id="contact" className="FormContainer">
+        <section id="contact" className="FormContainer" data-testid="contact">
           <h2 className="Title">Contact</h2>
           <Modal
             Content={
@@ -87,9 +87,9 @@ const Page = () => {
       </main>
 
       {/* Footer Section */}
-      <footer className="row">
+      <footer className="row" data-testid="footer">
         {/* Last Event Section */}
-        <div className="col presta">
+        <div className="col presta" data-testid="last-event">
           <h3>Notre dernière prestation</h3>
           {last && last.cover ? (
             <EventCard
@@ -103,7 +103,7 @@ const Page = () => {
         </div>
 
         {/* Contact Information */}
-        <div className="col contact">
+        <div className="col contact" data-testid="contact-info">
           <h3>Contactez-nous</h3>
           <address>45 avenue de la République, 75000 Paris</address>
           <div>01 23 45 67 89</div>
@@ -125,7 +125,7 @@ const Page = () => {
         </div>
 
         {/* Company Information */}
-        <div className="col description">
+        <div className="col description" data-testid="company-info">
           <Logo size="large" />
           <p>724 events est une agence spécialisée dans l&apos;organisation de divers événements professionnels, sportifs et culturels.</p>
         </div>
