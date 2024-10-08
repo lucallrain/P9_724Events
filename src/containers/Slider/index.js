@@ -1,59 +1,43 @@
-import { useEffect, useState, useRef, useCallback, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useData } from "../../contexts/DataContext";
 import { getMonth } from "../../helpers/Date";
+
 import "./style.scss";
 
 const Slider = () => {
   const { data } = useData();
   const [index, setIndex] = useState(0);
-  const [isManual, setIsManual] = useState(false);
-  const intervalRef = useRef(null);
 
-  // Trier les événements par date décroissante
-  const byDateDesc = useMemo(() => 
-    data?.focus?.sort((evtA, evtB) => new Date(evtA.date) < new Date(evtB.date) ? -1 : 1) || [], 
-    [data]
-  );
+  const sortedEvents = data?.focus?.sort((eventA, eventB) =>
+    new Date(eventB.date) < new Date(eventA.date) ? -1 : 1
+  ) || [];
 
-  // Fonction pour passer à la carte suivante
-  const nextCard = useCallback(() => 
-    setIndex((prevIndex) => (prevIndex < byDateDesc.length - 1 ? prevIndex + 1 : 0)),
-    [byDateDesc.length]
-  );
+  const goToNextCard = (newIndex = null) => {
+    if (newIndex !== null) {
+      setIndex(newIndex);
+    } else {
+      setIndex((prevIndex) =>
+        prevIndex < sortedEvents.length - 1 ? prevIndex + 1 : 0
+      );
+    }
+  };
 
-  // Gestion de l'auto-slide
   useEffect(() => {
-    if (!isManual && byDateDesc.length > 0) {
-      intervalRef.current = setInterval(nextCard, 5000);
-    }
+    const interval = setInterval(goToNextCard, 5000);
 
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current); // Nettoyer l'intervalle lors du démontage
-      }
-    };
-  }, [isManual, nextCard, byDateDesc.length]);
+    return () => clearInterval(interval);
+  }, [index, sortedEvents]);
 
-  // Gérer le changement manuel via les boutons radio
-  const handleRadioChange = useCallback((radioIdx) => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current); // Arrêter l'auto-slide lors d'un changement manuel
-    }
-    setIndex(radioIdx);
-    setIsManual(true);
-  }, []);
-
-  if (!byDateDesc.length) {
-    return <p>Chargement des événements...</p>; // Message de chargement
-  }
+  const handleRadioChange = (newIndex) => {
+    goToNextCard(newIndex);
+  };
 
   return (
     <div className="SlideCardList">
-      {byDateDesc.map((event) => (
-        // Ajoutez une vérification pour vous assurer que l'événement a un ID
+      {sortedEvents.map((event, idx) => (
         <div
-          key={event.id ? `slide-${event.id}` : `slide-${event.title}`} // Utilisez event.id, ou fallback à event.title
-          className={`SlideCard ${index === byDateDesc.indexOf(event) ? "SlideCard--display" : "SlideCard--hide"}`}
+          key={event.id || `event-${idx}`}  
+          className={`SlideCard SlideCard--${index === idx ? "display" : "hide"}`}
         >
           <img src={event.cover} alt={event.title} />
           <div className="SlideCard__descriptionContainer">
@@ -63,24 +47,23 @@ const Slider = () => {
               <div>{getMonth(new Date(event.date))}</div>
             </div>
           </div>
-          <div className="SlideCard__paginationContainer">
-            <div className="SlideCard__pagination">
-              {byDateDesc.map((paginationEvent, paginationIdx) => (
-                <label key={paginationEvent.id ? `pagination-${paginationEvent.id}` : `pagination-${paginationIdx}`} htmlFor={`radio-${paginationEvent.id}`} className="sr-only">
-                  <input
-                    id={`radio-${paginationEvent.id}`}
-                    type="radio"
-                    name="radio-button"
-                    checked={index === byDateDesc.indexOf(paginationEvent)}
-                    onChange={() => handleRadioChange(byDateDesc.indexOf(paginationEvent))}
-                    aria-label={`Slide ${byDateDesc.indexOf(paginationEvent) + 1}`}
-                  />
-                </label>
-              ))}
-            </div>
-          </div>
         </div>
       ))}
+
+      <div className="SlideCard__paginationContainer">
+        <div className="SlideCard__pagination">
+          {sortedEvents.map((event, radioIdx) => (
+            <input
+              key={event.id || `pagination-${radioIdx}`} 
+              type="radio"
+              name="radio-button"
+              checked={index === radioIdx}
+              onChange={() => handleRadioChange(radioIdx)}
+              aria-label={`Go to slide ${radioIdx + 1}`}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

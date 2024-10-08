@@ -21,12 +21,12 @@ const Page = () => {
       </header>
       <main>
         {/* Slider Section */}
-        <section className="SliderContainer">
+        <section id="slider" className="SliderContainer">
           <Slider />
         </section>
 
         {/* Services Section */}
-        <section className="ServicesContainer">
+        <section id="services" className="ServicesContainer">
           <h2 className="Title">Nos services</h2>
           <p>Nous organisons des événements sur mesure partout dans le monde</p>
           <div className="ListContainer">
@@ -46,13 +46,13 @@ const Page = () => {
         </section>
 
         {/* Events Section */}
-        <section className="EventsContainer">
+        <section id="events" className="EventsContainer">
           <h2 className="Title">Nos réalisations</h2>
           <EventList />
         </section>
 
         {/* Team Section */}
-        <section className="PeoplesContainer">
+        <section id="team" className="PeoplesContainer">
           <h2 className="Title">Notre équipe</h2>
           <p>Une équipe d&apos;experts dédiée à l&apos;organisation de vos événements</p>
           <div className="ListContainer">
@@ -66,7 +66,7 @@ const Page = () => {
         </section>
 
         {/* Contact Form Section */}
-        <div className="FormContainer" id="contact">
+        <section id="contact" className="FormContainer">
           <h2 className="Title">Contact</h2>
           <Modal
             Content={
@@ -83,7 +83,7 @@ const Page = () => {
               />
             )}
           </Modal>
-        </div>
+        </section>
       </main>
 
       {/* Footer Section */}
