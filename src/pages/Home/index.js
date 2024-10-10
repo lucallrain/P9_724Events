@@ -8,11 +8,23 @@ import Logo from "../../components/Logo";
 import Icon from "../../components/Icon";
 import Form from "../../containers/Form";
 import Modal from "../../containers/Modal";
+import ModalEvent from "../../containers/ModalEvent";
 import { useData } from "../../contexts/DataContext";
 import "./style.scss";
 
 const Page = () => {
-  const { last } = useData(); // Récupération des données du contexte
+  const { data, loading, error } = useData(); // Récupération des données du contexte
+
+  // Récupération de l'événement "last" de la liste des événements
+  const last = data?.events ? data.events[data.events.length - 1] : null;
+
+  if (loading) {
+    return <div>Chargement des données...</div>;
+  }
+
+  if (error) {
+    return <div>Erreur lors du chargement des événements : {error.message}</div>;
+  }
 
   return (
     <>
@@ -88,48 +100,58 @@ const Page = () => {
 
       {/* Footer Section */}
       <footer className="row" data-testid="footer">
-        {/* Last Event Section */}
-        <div className="col presta" data-testid="last-event">
-          <h3>Notre dernière prestation</h3>
-          {last && last.cover ? (
-            <EventCard
-              imageSrc={last.cover}
-              title={last.title}
-              date={new Date(last.date)}
-            />
-          ) : (
-            <div>Événement à venir</div>
-          )}
-        </div>
+  {/* Last Event Section */}
+  <div className="col presta" data-testid="last-event">
+    <h3>Notre dernière prestation</h3>
+    {last ? (
+      <Modal key={last.id} Content={<ModalEvent event={last} />}>
+        {({ setIsOpened }) => (
+          <EventCard
+            onClick={() => setIsOpened(true)}
+            imageSrc={last.cover}
+            title={last.title}
+            date={new Date(last.date)}
+            label={last.type}
+          />
+        )}
+      </Modal>
+    ) : (
+      <div>Événement à venir</div>
+    )}
+  </div>
 
-        {/* Contact Information */}
-        <div className="col contact" data-testid="contact-info">
-          <h3>Contactez-nous</h3>
-          <address>45 avenue de la République, 75000 Paris</address>
-          <div>01 23 45 67 89</div>
-          <div>contact@724events.com</div>
-          <div>
-            <a href="#twitch" aria-label="Twitch">
-              <Icon name="twitch" />
-            </a>
-            <a href="#facebook" aria-label="Facebook">
-              <Icon name="facebook" />
-            </a>
-            <a href="#twitter" aria-label="Twitter">
-              <Icon name="twitter" />
-            </a>
-            <a href="#youtube" aria-label="YouTube">
-              <Icon name="youtube" />
-            </a>
-          </div>
-        </div>
+  {/* Contact Information */}
+  <div className="col contact" data-testid="contact-info">
+    <h3>Contactez-nous</h3>
+    <address>45 avenue de la République, 75000 Paris</address>
+    <div>01 23 45 67 89</div>
+    <div>contact@724events.com</div>
+    <div>
+      <a href="#twitch" aria-label="Twitch">
+        <Icon name="twitch" />
+      </a>
+      <a href="#facebook" aria-label="Facebook">
+        <Icon name="facebook" />
+      </a>
+      <a href="#twitter" aria-label="Twitter">
+        <Icon name="twitter" />
+      </a>
+      <a href="#youtube" aria-label="YouTube">
+        <Icon name="youtube" />
+      </a>
+    </div>
+  </div>
 
-        {/* Company Information */}
-        <div className="col description" data-testid="company-info">
-          <Logo size="large" />
-          <p>724 events est une agence spécialisée dans l&apos;organisation de divers événements professionnels, sportifs et culturels.</p>
-        </div>
-      </footer>
+  {/* Company Information */}
+  <div className="col description" data-testid="company-info">
+    <Logo size="large" />
+    <p>
+      724 events est une agence spécialisée dans l&apos;organisation de divers événements professionnels,
+      sportifs et culturels.
+    </p>
+  </div>
+</footer>
+
     </>
   );
 };

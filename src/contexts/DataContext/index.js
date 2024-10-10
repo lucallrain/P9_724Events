@@ -5,6 +5,7 @@ import {
   useContext,
   useEffect,
   useState,
+  useMemo,
 } from "react";
 
 const DataContext = createContext({});
@@ -19,26 +20,34 @@ export const api = {
 export const DataProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   const getData = useCallback(async () => {
     try {
-      setData(await api.loadData());
+      const result = await api.loadData();
+      setData(result);
     } catch (err) {
       setError(err);
+    } finally {
+      setLoading(false);
     }
   }, []);
+
   useEffect(() => {
-    if (data) return;
-    getData();
-  });
-  
+    if (!data) {
+      getData();
+    }
+  }, [getData, data]);
+
+  // Utilisation de useMemo pour éviter la recréation de l'objet à chaque rendu
+  const value = useMemo(() => ({
+    data,
+    error,
+    loading,
+  }), [data, error, loading]);
+
   return (
-    <DataContext.Provider
-      // eslint-disable-next-line react/jsx-no-constructed-context-values
-      value={{
-        data,
-        error,
-      }}
-    >
+    <DataContext.Provider value={value}>
       {children}
     </DataContext.Provider>
   );
@@ -46,7 +55,7 @@ export const DataProvider = ({ children }) => {
 
 DataProvider.propTypes = {
   children: PropTypes.node.isRequired,
-}
+};
 
 export const useData = () => useContext(DataContext);
 
