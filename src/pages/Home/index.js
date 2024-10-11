@@ -13,9 +13,8 @@ import { useData } from "../../contexts/DataContext";
 import "./style.scss";
 
 const Page = () => {
-  const { data, loading, error } = useData(); // Récupération des données du contexte
+  const { data, loading, error } = useData(); 
 
-  // Récupération de l'événement "last" de la liste des événements
   const last = data?.events ? data.events[data.events.length - 1] : null;
 
   if (loading) {

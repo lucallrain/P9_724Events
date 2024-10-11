@@ -16,8 +16,8 @@ const Select = ({
   const [collapsed, setCollapsed] = useState(true);
   const changeValue = (newValue) => {
     setValue(newValue);
-    setCollapsed(true); // Refermer la liste après sélection
-    onChange(newValue); // Transmettre la nouvelle valeur sélectionnée pour filtrer les événements
+    setCollapsed(true); 
+    onChange(newValue); 
   };
   return (
     <div className={`SelectContainer ${type}`} data-testid="select-testid">

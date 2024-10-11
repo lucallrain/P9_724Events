@@ -39,7 +39,6 @@ export const DataProvider = ({ children }) => {
     }
   }, [getData, data]);
 
-  // Utilisation de useMemo pour éviter la recréation de l'objet à chaque rendu
   const value = useMemo(() => ({
     data,
     error,
