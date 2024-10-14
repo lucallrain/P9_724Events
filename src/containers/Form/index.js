@@ -12,11 +12,11 @@ const Form = ({ onSuccess, onError }) => {
     async (evt) => {
       evt.preventDefault();
       setSending(true);
-      
+      // We try to call mockContactApi
       try {
         await mockContactApi();
         setSending(false);
-        onSuccess(); 
+        onSuccess(); // Appel de la fonction onSuccess après la réussite de l'API
       } catch (err) {
         setSending(false);
         onError(err);
