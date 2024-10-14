@@ -59,21 +59,17 @@ describe("When Events is created", () => {
         );
       });
 
-      // Vérifiez que "Forum #productCON" est affiché avant le filtrage
       await screen.findByText("Forum #productCON");
 
-      // Ouvrir la liste déroulante des catégories
       fireEvent.click(await screen.findByTestId("collapse-button-testid"));
 
       const categoryElements = await screen.findAllByText("soirée entreprise");
-      const categoryElement = categoryElements.find(el => el.tagName === "LI"); // Sélectionner celui qui correspond à la catégorie
+      const categoryElement = categoryElements.find(el => el.tagName === "LI"); 
       fireEvent.click(categoryElement);
 
 
-      // Vérifiez que "Conférence #productCON" est affiché
       await screen.findByText("Conférence #productCON");
 
-      // Attendez que "Forum #productCON" ne soit plus affiché après filtrage
       await waitFor(() => {
         expect(screen.queryByText("Forum #productCON")).toBeNull();
       });

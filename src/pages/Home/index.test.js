@@ -15,7 +15,7 @@ describe("Home Page Integration Tests", () => {
     const serviceSection = await waitFor(() => screen.findByTestId("services"));
     
     const serviceCards = within(serviceSection).getAllByRole("heading", { level: 3 });
-    expect(serviceCards.length).toBe(3); // Il y a 3 services
+    expect(serviceCards.length).toBe(3); 
   });
   
 
