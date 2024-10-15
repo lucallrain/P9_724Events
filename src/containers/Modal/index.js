@@ -16,7 +16,7 @@ const Modal = ({ opened, Content, children }) => {
               type="button"
               className="close-modal"
               data-testid="close-modal"
-              onClick={() => setIsOpened(false)} // Garde le bouton de fermeture
+              onClick={() => setIsOpened(false)} 
             >
               <Icon name="close" />
             </button>
